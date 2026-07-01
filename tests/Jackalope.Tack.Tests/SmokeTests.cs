@@ -14,10 +14,12 @@ namespace Tack.Tests;
 /// </summary>
 public sealed class SmokeTests
 {
+    private const string ExpectedCorePackageId = "Jackalope.Tack.Core";
+
     [Fact]
-    public void CorePackageMarker_ExposesExpectedPackageId()
+    public void CorePackageMarkerExposesExpectedPackageId()
     {
         string res = TackCorePackageMarker.PackageId;
-        Assert.Equal("Jackalope.Tack.Core", res);
+        Assert.Equal(ExpectedCorePackageId, res);
     }
 }
