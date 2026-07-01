@@ -1,0 +1,104 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.x'
+
+      - name: Determine version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="0.0.0-dev"
+          fi
+          echo "PackageVersion=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Version: ${VERSION}"
+
+      - name: Restore
+        run: dotnet restore Tack.slnx
+
+      - name: Build
+        run: dotnet build Tack.slnx --configuration Release --no-restore -p:TreatWarningsAsErrors=true -p:Version=${{ steps.version.outputs.PackageVersion }}
+
+      - name: Test
+        run: dotnet test Tack.slnx --configuration Release --no-build --filter "Category!=Integration"
+
+      - name: Pack
+        run: dotnet pack Tack.slnx --configuration Release --no-build -p:Version=${{ steps.version.outputs.PackageVersion }} -o ./artifacts/packages
+
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: packages-${{ steps.version.outputs.PackageVersion }}
+          path: ./artifacts/packages/*.nupkg
+          if-no-files-found: error
+
+  publish:
+    # Publishes to GitHub Packages on push to main (0.0.0-dev prerelease) and
+    # on tag push (the tag-derived SemVer). Skipped on pull_request so forks
+    # and PR runs never push packages. Needs `build` so we only publish an
+    # artifact set that already passed build + test + pack.
+    needs: [build]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.x'
+
+      - name: Determine version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="0.0.0-dev"
+          fi
+          echo "PackageVersion=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Download package artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: packages-${{ steps.version.outputs.PackageVersion }}
+          path: ./artifacts/packages
+
+      - name: Push to GitHub Packages
+        # GITHUB_TOKEN has packages:write scope for this org's package
+        # registry. --skip-duplicate lets re-runs against the same 0.0.0-dev
+        # version no-op instead of failing on an already-pushed package.
+        run: >-
+          dotnet nuget push "./artifacts/packages/*.nupkg"
+          --source https://nuget.pkg.github.com/JackalopeTechnologies/index.json
+          --api-key ${{ secrets.GITHUB_TOKEN }}
+          --skip-duplicate
