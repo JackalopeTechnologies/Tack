@@ -1,0 +1,75 @@
+## .NET / Visual Studio ignore. Get latest from `dotnet new gitignore`.
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+
+# Visual Studio cache/options
+.vs/
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Test / coverage
+[Tt]est[Rr]esult*/
+TestResult.xml
+coverage*.json
+coverage*.xml
+coverage*.info
+coverage-results/
+*.coverage
+*.coveragexml
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# MSBuild logs
+*.binlog
+
+# JetBrains Rider
+*.sln.iml
+.idea/
+
+# Scratch files for crafting commit messages and PR bodies at the repo root
+/msg.txt
+/pr-body.md
+
+# dotenv files
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+[Dd]esktop.ini
+
+# Editor swap files
+*.swp
+*~
+
+# VS Code (partial allow-list)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
