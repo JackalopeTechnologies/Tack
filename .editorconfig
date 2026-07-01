@@ -640,6 +640,21 @@ dotnet_diagnostic.STY0004.severity=suggestion
 dotnet_diagnostic.STY0008.severity=suggestion
 dotnet_diagnostic.NUM0002.severity=suggestion
 
+[tests/**/*.cs]
+# Relax rules in Tack test projects (tests/ live under the top-level tests/ dir;
+# the [**/tests/**/*.cs] glob above only matches tests/ as a SUBdirectory, so this
+# section covers Tack's top-level layout). STY0006 (method PascalCase) intentionally
+# stays at error — test methods are PascalCase without underscores, matching the
+# code-of-record's own test convention.
+dotnet_diagnostic.STR0002.severity=suggestion
+dotnet_diagnostic.STR0005.severity=suggestion
+dotnet_diagnostic.STR0010.severity=suggestion
+dotnet_diagnostic.STR0008.severity=suggestion
+dotnet_diagnostic.STR0009Error.severity=suggestion
+dotnet_diagnostic.STY0004.severity=suggestion
+dotnet_diagnostic.STY0008.severity=suggestion
+dotnet_diagnostic.NUM0002.severity=suggestion
+
 [{SaddleRAG.Tests/**.cs,*Tests/*.cs,*Tests/**/*.cs}]
 # Relax rules in test projects (SaddleRAG.Tests pattern)
 dotnet_diagnostic.STR0002.severity=suggestion
