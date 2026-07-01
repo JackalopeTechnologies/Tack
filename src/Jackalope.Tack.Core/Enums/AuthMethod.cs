@@ -1,0 +1,30 @@
+// AuthMethod.cs
+// Copyright © 2012–Present Jackalope Technologies, Inc. and Doug Gerard.
+// SPDX-License-Identifier: MIT
+// Licensed under the MIT License. See the LICENSE file in the repo root.
+
+namespace Tack.Core.Enums;
+
+/// <summary>
+///     Authentication method for scraping protected documentation sites.
+/// </summary>
+public enum AuthMethod
+
+{
+    /// <summary>
+    ///     Inject a pre-obtained cookie string into all requests.
+    /// </summary>
+    Cookie,
+
+
+    /// <summary>
+    ///     Automate a login form before crawling via Playwright.
+    /// </summary>
+    LoginForm,
+
+
+    /// <summary>
+    ///     Pass an API key or bearer token in a request header.
+    /// </summary>
+    ApiKey
+}
