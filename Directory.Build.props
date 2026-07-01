@@ -1,0 +1,46 @@
+<Project>
+
+  <!--
+    Repo-level MSBuild defaults applied to every project. CI overrides Version
+    via -p:Version=$PackageVersion (0.0.0-dev on push, the tag-derived SemVer on
+    tag). Local dev builds default to 0.0.0-dev below so binaries advertise
+    themselves as a dev build rather than .NET's default 1.0.0.0.
+  -->
+
+  <PropertyGroup>
+    <Version Condition="'$(Version)' == ''">0.0.0-dev</Version>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors Condition="'$(TreatWarningsAsErrors)' == ''">false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!--
+    Shared NuGet package metadata. Individual package projects set
+    IsPackable, PackageId, and RootNamespace; everything common lives here.
+    Non-packable projects (tests) opt out with <IsPackable>false</IsPackable>.
+  -->
+  <PropertyGroup>
+    <Authors>Jackalope Technologies, Inc. and Doug Gerard</Authors>
+    <Company>Jackalope Technologies, Inc.</Company>
+    <Product>Tack</Product>
+    <Copyright>Copyright © 2012–Present Jackalope Technologies, Inc. and Doug Gerard.</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/JackalopeTechnologies/Tack</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/JackalopeTechnologies/Tack.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>rag;retrieval;embeddings;mcp;vector-search</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <Description>A reusable, domain-agnostic RAG engine with pluggable seams.</Description>
+  </PropertyGroup>
+
+  <!--
+    The shared README ships inside every package (PackageReadmeFile points at
+    README.md). Only include it when the project actually packs.
+  -->
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
